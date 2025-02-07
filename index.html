@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAV File Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .file-list {
+            margin-top: 20px;
+        }
+        audio {
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Upload and Play WAV Files</h2>
+
+    <!-- Upload Form -->
+    <input type="file" id="fileInput" accept="audio/wav">
+    <button onclick="uploadFile()">Upload</button>
+
+    <h3>Available Files:</h3>
+    <div class="file-list" id="fileList"></div>
+
+    <script>
+        const serverUrl = "https://audioapi-fzvl.onrender.com"; // Change this if deployed
+
+        // Function to upload file
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                alert("Please select a WAV file to upload.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("audio", fileInput.files[0]);
+
+            fetch(`${serverUrl}/upload`, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadFileList();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        // Function to load file list
+        function loadFileList() {
+            fetch(`${serverUrl}/files`)
+            .then(response => response.json())
+            .then(files => {
+                let fileListDiv = document.getElementById('fileList');
+                fileListDiv.innerHTML = "";
+
+                files.forEach(file => {
+                    let fileUrl = `${serverUrl}/uploads/${file}`;
+                    fileListDiv.innerHTML += `
+                        <p>${file}</p>
+                        <audio controls>
+                            <source src="${fileUrl}" type="audio/wav">
+                            Your browser does not support the audio tag.
+                        </audio>
+                    `;
+                });
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        // Load files on page load
+        loadFileList();
+    </script>
+
+</body>
+</html>
