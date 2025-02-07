@@ -44,7 +44,7 @@
             let formData = new FormData();
             formData.append("audio", fileInput.files[0]);
 
-            fetch(`${serverUrl}/upload`, {
+            fetch(`${serverUrl}/uploads`, {
                 method: "POST",
                 body: formData
             })
@@ -57,7 +57,7 @@
         }
 
         // Function to load file list
-        function loadFileList() {
+        /*function loadFileList() {
             fetch(`${serverUrl}/files`)
             .then(response => response.json())
             .then(files => {
@@ -76,7 +76,31 @@
                 });
             })
             .catch(error => console.error("Error:", error));
+        }*/
+        function loadFileList() {
+            fetch(`${serverUrl}/files`)
+            .then(response => response.json())
+            .then(files => {
+                let fileListDiv = document.getElementById('fileList');
+                fileListDiv.innerHTML = ""; // Clear existing list
+
+                files.forEach(file => {
+                    let fileUrl = `${serverUrl}/uploads/${file}`;
+
+                    let fileElement = document.createElement("div");
+                    fileElement.innerHTML = `
+                        <p>${file}</p>
+                        <a href="${fileUrl}" download="${file}" class="download-btn">
+                            Download
+                        </a>
+                    `;
+
+                    fileListDiv.appendChild(fileElement);
+                });
+            })
+            .catch(error => console.error("Error:", error));
         }
+
 
         // Load files on page load
         loadFileList();

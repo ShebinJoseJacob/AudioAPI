@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors());
-
+app.use('/uploads', express.static(uploadDir));
 
 // Ensure the upload directory exists
 const uploadDir = './uploads';
@@ -34,7 +34,7 @@ app.get('/files', (req, res) => {
 });
 
 // API Endpoint to receive a .wav file
-app.post('/upload', upload.single('audio'), (req, res) => {
+app.post('/uploads', upload.single('audio'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
