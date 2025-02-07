@@ -7,10 +7,12 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors());
-app.use('/uploads', express.static(uploadDir));
+
 
 // Ensure the upload directory exists
 const uploadDir = './uploads';
+app.use('/uploads', express.static(uploadDir));
+
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
