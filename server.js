@@ -24,6 +24,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+app.get('/files', (req, res) => {
+    fs.readdir(uploadDir, (err, files) => {
+        if (err) {
+            return res.status(500).json({ message: "Error reading files" });
+        }
+        res.json(files.filter(file => file.endsWith('.wav')));
+    });
+});
+
 // API Endpoint to receive a .wav file
 app.post('/upload', upload.single('audio'), (req, res) => {
     if (!req.file) {
